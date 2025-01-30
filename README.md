@@ -6,7 +6,7 @@ A Next.js application that allows Twitch chat messages to be read aloud using El
 
 ## Features
 
-- Support for up to 3 players with individual voice settings
+- Support for really any number of players with individual voice settings (default to 3)
 - ElevenLabs Text-to-Speech integration with multiple voices
 - Twitch chat integration
 - Random player selection from a pool of volunteers
@@ -32,6 +32,8 @@ A Next.js application that allows Twitch chat messages to be read aloud using El
    ```
    NEXT_PUBLIC_TWITCH_CHANNEL=your_twitch_channel
    NEXT_PUBLIC_ELEVENLABS_API_KEY=your_elevenlabs_api_key
+   NEXT_PUBLIC_USERNAME=your_twitch_username
+   NEXT_PUBLIC_OAUTH=your_twitch_oauth_token
    ```
 
 3. Get your ElevenLabs API key:
@@ -52,7 +54,7 @@ A Next.js application that allows Twitch chat messages to be read aloud using El
 
 ### For Streamers
 
-1. Open the web interface and configure up to 3 players
+1. Open the web interface and configure players
 2. For each player, you can:
    - Manually set their username
    - Choose their voice from available ElevenLabs voices
