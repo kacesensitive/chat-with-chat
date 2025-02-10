@@ -9,6 +9,7 @@ import {
 } from "./ui/select";
 import { useStore } from "@/store";
 import { ChatCharacter } from "./ChatCharacter";
+import { useSharedState } from "driftdb-react";
 
 interface PlayerCardProps {
   playerNumber: number;
@@ -23,6 +24,35 @@ interface TTSEndEvent extends CustomEvent {
 }
 
 export function PlayerCard({ playerNumber }: PlayerCardProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_sharedStateObject, setSharedStateObject] = useSharedState(
+    "sharedStateObject",
+    {
+      players: [
+        {
+          playerNumber: 1,
+          currentMessage: "",
+          isAnimating: false,
+          characterNumber: 1,
+          characterName: "Player 1",
+        },
+        {
+          playerNumber: 2,
+          currentMessage: "",
+          isAnimating: false,
+          characterNumber: 2,
+          characterName: "Player 2",
+        },
+        {
+          playerNumber: 3,
+          currentMessage: "",
+          isAnimating: false,
+          characterNumber: 3,
+          characterName: "Player 3",
+        },
+      ],
+    }
+  );
   const [username, setUsername] = React.useState("");
   const [isAnimating, setIsAnimating] = useState(false);
   const [currentMessage, setCurrentMessage] = useState<string>("");
@@ -72,6 +102,14 @@ export function PlayerCard({ playerNumber }: PlayerCardProps) {
         username: username.toLowerCase(),
       });
       setUsername("");
+      setSharedStateObject((prev) => ({
+        ...prev,
+        players: prev.players.map((p, index) =>
+          index === playerNumber - 1
+            ? { ...p, characterName: username.toLowerCase() }
+            : p
+        ),
+      }));
     }
   };
 
@@ -84,6 +122,12 @@ export function PlayerCard({ playerNumber }: PlayerCardProps) {
         ...player,
         username: randomUser,
       });
+      setSharedStateObject((prev) => ({
+        ...prev,
+        players: prev.players.map((p, index) =>
+          index === playerNumber - 1 ? { ...p, characterName: randomUser } : p
+        ),
+      }));
       clearPool(playerNumber);
     }
   };
@@ -126,6 +170,18 @@ export function PlayerCard({ playerNumber }: PlayerCardProps) {
           </Button>
         </div>
 
+        <div className="flex items-center justify-between">
+          <Button
+            onClick={() => {
+              const url = `${window.location.origin}/player/${playerNumber}`;
+              navigator.clipboard.writeText(url);
+            }}
+            variant="outline"
+          >
+            Copy OBS URL
+          </Button>
+        </div>
+
         <Select
           value={player.voice}
           onValueChange={(value) => updatePlayerVoice(playerNumber, value)}
@@ -145,6 +201,7 @@ export function PlayerCard({ playerNumber }: PlayerCardProps) {
 
       <ChatCharacter
         characterNumber={playerNumber}
+        characterName={player.username}
         isAnimating={isAnimating}
         currentMessage={currentMessage}
       />

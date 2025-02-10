@@ -22,6 +22,7 @@ export class TwitchService {
   private setupEventHandlers() {
     this.client.on("message", (channel, tags, message, self) => {
       if (self) return;
+      console.log("Message received:", message);
 
       const username = tags.username || "";
       const messageText = message.toLowerCase();

@@ -21,6 +21,11 @@ export default {
           "0%, 100%": { transform: "translateY(0px)" },
           "65%": { transform: "translateY(10px)" },
         },
+        talk: {
+          "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
+          "25%": { transform: "translateY(2px) rotate(-1deg)" },
+          "75%": { transform: "translateY(-2px) rotate(1deg)" },
+        },
       },
       animation: {
         nod: "nod 1s ease-in-out infinite bob 1.3s ease-in-out infinite",

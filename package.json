@@ -15,6 +15,7 @@
     "@types/tmi.js": "^1.8.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "driftdb-react": "^1.0.12",
     "elevenlabs-node": "^2.0.3",
     "lucide-react": "^0.474.0",
     "microsoft-cognitiveservices-speech-sdk": "^1.42.0",
