@@ -2,6 +2,7 @@ export class TTSService {
   private apiKey: string;
   private audioMap: Map<number, HTMLAudioElement> = new Map();
   private urlMap: Map<number, string> = new Map();
+  private playedUrls: Set<string> = new Set();
 
   constructor(apiKey: string) {
     this.apiKey = apiKey;
@@ -43,6 +44,12 @@ export class TTSService {
     text: string,
     isOBS: boolean = false
   ): Promise<void> {
+    if (this.playedUrls.has(audioUrl)) {
+      console.log("Skipping already played audio URL");
+      return;
+    }
+    this.playedUrls.add(audioUrl);
+
     try {
       // Clean up previous audio element for this player if it exists
       if (this.audioMap.has(playerNumber)) {
@@ -114,10 +121,12 @@ export class TTSService {
         // Clean up after playback
         audio.onended = () => {
           this.audioMap.delete(playerNumber);
+          this.playedUrls.delete(audioUrl);
           resolve();
         };
       });
     } catch (error) {
+      this.playedUrls.delete(audioUrl);
       console.error("Error playing audio:", error);
       throw error;
     }
@@ -161,5 +170,6 @@ export class TTSService {
       }
       this.audioMap.delete(playerNumber);
     }
+    this.playedUrls.clear();
   }
 }

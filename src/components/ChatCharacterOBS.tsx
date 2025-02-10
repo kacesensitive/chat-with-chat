@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { useSharedState } from "driftdb-react";
 
 export function ChatCharacterOBS({ playerNumber }: { playerNumber: number }) {
+  const [showMute, setShowMute] = useState(true);
   // get the needed data from the useSharedState
   const [sharedStateObject] = useSharedState("sharedStateObject", {
     players: [
@@ -32,24 +33,16 @@ export function ChatCharacterOBS({ playerNumber }: { playerNumber: number }) {
 
   return (
     <div className="relative flex flex-col items-center">
-      <div className="mt-2 p-2 bg-slate-800 rounded-lg max-w-[400px] min-w-[400px] max-h-[300px] min-h-[300px] text-center flex flex-col items-center justify-between relative">
-        <p
-          className="text-white break-words w-full"
-          style={{
-            fontSize:
-              sharedStateObject.players[playerNumber - 1].currentMessage
-                ?.length &&
-              sharedStateObject.players[playerNumber - 1].currentMessage
-                .length <= 5
-                ? "2.5rem"
-                : sharedStateObject.players[playerNumber - 1].currentMessage
-                    ?.length &&
-                  sharedStateObject.players[playerNumber - 1].currentMessage
-                    .length <= 15
-                ? "1.5rem"
-                : "1rem",
-          }}
+      {showMute && (
+        <button
+          className="absolute top-0 left-0 z-50 bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-700"
+          onClick={() => setShowMute(false)}
         >
+          Click to Enable Audio
+        </button>
+      )}
+      <div className="mt-2 p-2 bg-slate-800 rounded-lg max-w-[400px] min-w-[400px] max-h-[300px] min-h-[300px] text-center flex flex-col items-center justify-between relative">
+        <p className="text-xl text-white break-words w-full">
           {sharedStateObject.players[playerNumber - 1].currentMessage}
         </p>
         <div className="absolute bottom-2 left-2">

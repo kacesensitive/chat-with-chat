@@ -17,17 +17,7 @@ export function ChatCharacter({
   return (
     <div className="relative flex flex-col items-center">
       <div className="mt-2 p-2 bg-slate-800 rounded-lg max-w-[400px] min-w-[400px] max-h-[300px] min-h-[300px] text-center flex flex-col items-center justify-between relative">
-        <p
-          className="text-white break-words w-full"
-          style={{
-            fontSize:
-              currentMessage?.length && currentMessage.length <= 5
-                ? "2.5rem"
-                : currentMessage?.length && currentMessage.length <= 15
-                ? "1.5rem"
-                : "1rem",
-          }}
-        >
+        <p className="text-xl text-white break-words w-full">
           {currentMessage}
         </p>
         <div className="absolute bottom-2 left-2">

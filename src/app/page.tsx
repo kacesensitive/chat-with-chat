@@ -150,12 +150,13 @@ const Main = () => {
 
     twitchService.connect();
 
+    const fetchedAudioSet = fetchedAudioRef.current; // Store ref value
+
     return () => {
       twitchService.disconnect();
       ttsService.dispose();
       window.removeEventListener("tts-end", handleTTSEnd as EventListener);
-      // Clear the fetched audio set on cleanup
-      fetchedAudioRef.current.clear();
+      fetchedAudioSet.clear(); // Use stored value instead of ref.current
     };
   }, [setAvailableVoices, setSharedStateObject]);
 
