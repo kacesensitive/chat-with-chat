@@ -48,7 +48,11 @@ export class TTSService {
       console.log("Skipping already played audio URL");
       return;
     }
-    this.playedUrls.add(audioUrl);
+
+    // Validate the blob URL before attempting to play
+    if (!audioUrl.startsWith("blob:")) {
+      throw new Error("Invalid audio URL format - expected blob URL");
+    }
 
     try {
       // Clean up previous audio element for this player if it exists
@@ -66,12 +70,26 @@ export class TTSService {
       this.urlMap.set(playerNumber, audioUrl);
 
       // Create new audio element with autoplay for OBS
-      const audio = new Audio(audioUrl);
+      const audio = new Audio();
+
+      // Set up error handling before setting the src
+      audio.onerror = () => {
+        console.error("Audio error details:", {
+          error: audio.error,
+          networkState: audio.networkState,
+          readyState: audio.readyState,
+        });
+      };
+
       if (isOBS) {
         audio.autoplay = true;
         // Start muted then unmute after load to bypass autoplay restrictions
         audio.muted = true;
       }
+
+      // Now set the source
+      audio.src = audioUrl;
+
       this.audioMap.set(playerNumber, audio);
 
       // Dispatch event when speech starts
@@ -99,29 +117,49 @@ export class TTSService {
       return new Promise<void>((resolve, reject) => {
         if (!audio) return reject(new Error("Audio not initialized"));
 
-        audio.addEventListener("error", (e) => {
-          console.error("Audio error:", e);
-          reject(new Error("Error loading audio: " + e));
-        });
+        let hasError = false;
 
-        audio.addEventListener("loadeddata", async () => {
+        const errorHandler = () => {
+          hasError = true;
+          const errorDetails = {
+            error: audio.error,
+            networkState: audio.networkState,
+            readyState: audio.readyState,
+          };
+          console.error("Audio error details:", errorDetails);
+          this.playedUrls.delete(audioUrl);
+          reject(
+            new Error(`Error loading audio: ${JSON.stringify(errorDetails)}`)
+          );
+        };
+
+        const loadHandler = async () => {
+          if (hasError) return;
+
           try {
             if (isOBS) {
               // Unmute after load for OBS
               audio.muted = false;
             }
             await audio.play();
+            this.playedUrls.add(audioUrl);
             resolve();
           } catch (error) {
             console.error("Play error:", error);
+            this.playedUrls.delete(audioUrl);
             reject(error);
           }
-        });
+        };
+
+        audio.addEventListener("error", errorHandler, { once: true });
+        audio.addEventListener("loadeddata", loadHandler, { once: true });
 
         // Clean up after playback
         audio.onended = () => {
           this.audioMap.delete(playerNumber);
           this.playedUrls.delete(audioUrl);
+          audio.removeEventListener("error", errorHandler);
+          audio.removeEventListener("loadeddata", loadHandler);
           resolve();
         };
       });
