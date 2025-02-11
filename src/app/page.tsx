@@ -33,7 +33,7 @@ const Main = () => {
           currentMessage: "",
           isAnimating: false,
           characterNumber: 1,
-          characterName: "Player 1",
+          characterName: "",
           audioUrl: "",
         },
         {
@@ -41,7 +41,7 @@ const Main = () => {
           currentMessage: "",
           isAnimating: false,
           characterNumber: 2,
-          characterName: "Player 2",
+          characterName: "",
           audioUrl: "",
         },
         {
@@ -49,7 +49,7 @@ const Main = () => {
           currentMessage: "",
           isAnimating: false,
           characterNumber: 3,
-          characterName: "Player 3",
+          characterName: "",
           audioUrl: "",
         },
       ],
@@ -76,9 +76,14 @@ const Main = () => {
       const { playerNumber } = event.detail;
       setSharedStateObject((prev) => ({
         ...prev,
-        players: prev.players.map((p, index) =>
-          index === playerNumber - 1
-            ? { ...p, currentMessage: "", isAnimating: false, audioUrl: "" }
+        players: prev.players.map((p) =>
+          p.playerNumber === playerNumber
+            ? {
+                ...p,
+                currentMessage: "",
+                isAnimating: false,
+                audioUrl: "",
+              }
             : p
         ),
       }));
@@ -127,8 +132,8 @@ const Main = () => {
             ...prev.audioBlobs,
             [audioKey]: audioUrl,
           },
-          players: prev.players.map((p, index) =>
-            index === playerNumber - 1
+          players: prev.players.map((p) =>
+            p.playerNumber === playerNumber
               ? {
                   ...p,
                   currentMessage: message,
@@ -158,7 +163,7 @@ const Main = () => {
       window.removeEventListener("tts-end", handleTTSEnd as EventListener);
       fetchedAudioSet.clear(); // Use stored value instead of ref.current
     };
-  }, [setAvailableVoices, setSharedStateObject]);
+  }, []);
 
   return (
     <main className="container mx-auto p-4 space-y-4 bg-transparent">

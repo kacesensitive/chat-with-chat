@@ -34,21 +34,21 @@ export function PlayerCard({ playerNumber }: PlayerCardProps) {
           currentMessage: "",
           isAnimating: false,
           characterNumber: 1,
-          characterName: "Player 1",
+          characterName: "",
         },
         {
           playerNumber: 2,
           currentMessage: "",
           isAnimating: false,
           characterNumber: 2,
-          characterName: "Player 2",
+          characterName: "",
         },
         {
           playerNumber: 3,
           currentMessage: "",
           isAnimating: false,
           characterNumber: 3,
-          characterName: "Player 3",
+          characterName: "",
         },
       ],
     }
@@ -136,7 +136,7 @@ export function PlayerCard({ playerNumber }: PlayerCardProps) {
     <div className="flex flex-col items-center gap-4">
       <div className="rounded-lg border p-4 space-y-4 bg-slate-900 w-full">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Player {playerNumber}</h2>
+          <h2 className="text-lg font-semibold">-Player {playerNumber}-</h2>
           <div className="flex items-center space-x-2">
             <label className="text-sm">TTS Enabled</label>
             <input
@@ -173,8 +173,12 @@ export function PlayerCard({ playerNumber }: PlayerCardProps) {
         <div className="flex items-center justify-between">
           <Button
             onClick={() => {
-              const url = `${window.location.origin}/player/${playerNumber}`;
-              navigator.clipboard.writeText(url);
+              const currentUrl = new URL(window.location.href);
+              const driftdbRoom = currentUrl.searchParams.get("_driftdb_room");
+              const newUrl = `${window.location.origin}/player/${playerNumber}${
+                driftdbRoom ? `?_driftdb_room=${driftdbRoom}` : ""
+              }`;
+              navigator.clipboard.writeText(newUrl);
             }}
             variant="outline"
           >

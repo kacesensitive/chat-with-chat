@@ -24,7 +24,32 @@ const PlayerPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const unwrappedParams = React.use(params);
   const playerNumber = parseInt(unwrappedParams.id);
   const [sharedStateObject] = useSharedState<SharedState>("sharedStateObject", {
-    players: [],
+    players: [
+      {
+        playerNumber: 1,
+        currentMessage: "",
+        isAnimating: false,
+        characterNumber: 1,
+        characterName: "",
+        audioUrl: "",
+      },
+      {
+        playerNumber: 2,
+        currentMessage: "",
+        isAnimating: false,
+        characterNumber: 2,
+        characterName: "",
+        audioUrl: "",
+      },
+      {
+        playerNumber: 3,
+        currentMessage: "",
+        isAnimating: false,
+        characterNumber: 3,
+        characterName: "",
+        audioUrl: "",
+      },
+    ],
     audioBlobs: {},
   });
   const ttsServiceRef = useRef<TTSService | null>(null);
@@ -82,7 +107,10 @@ const PlayerPage = ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <div className="h-screen w-screen flex items-center justify-center bg-transparent">
-      <ChatCharacterOBS playerNumber={playerNumber} />
+      <ChatCharacterOBS
+        playerNumber={playerNumber}
+        sharedStateObject={sharedStateObject}
+      />
     </div>
   );
 };
